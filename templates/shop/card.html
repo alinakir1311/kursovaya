@@ -1,0 +1,35 @@
+{% load static %}
+<article class="product-card"{% if pages_demo %}
+    data-name="{{ product.name }}" data-brand="{{ product.brand }}"
+    data-category="{{ product.category.slug }}" data-price="{{ product.price|stringformat:'f' }}"
+    data-stock="{{ product.stock }}"{% endif %}>
+    <a class="product-art" href="{% url 'product' product.slug %}" aria-label="{{ product.name }}">
+        {% if product.image %}
+            <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy">
+        {% else %}
+            {% with art="shop/products/"|add:product.category.slug|add:".svg" %}
+                <img src="{% static art %}" alt="Иллюстрация категории {{ product.category }}" loading="lazy">
+            {% endwith %}
+        {% endif %}
+    </a>
+    <div class="card-body">
+        <small>{{ product.brand }}</small>
+        <h3><a href="{% url 'product' product.slug %}">{{ product.name }}</a></h3>
+        <p class="availability">
+            {% if product.stock %}
+                В наличии {{ product.stock }} шт
+            {% else %}
+                Ожидается поступление
+            {% endif %}
+        </p>
+        <div class="price-row">
+            <strong>{{ product.price|floatformat:0 }} ₽</strong>
+            {% if not pages_demo %}
+                <form method="post" action="{% url 'cart_change' product.pk %}">
+                    {% csrf_token %}
+                    <button {% if not product.stock %}disabled{% endif %} aria-label="Добавить {{ product.name }} в корзину">В корзину</button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+</article>

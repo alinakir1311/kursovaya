@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block content %}
+    <p class="eyebrow">ПРОСТОЙ СТАРТ В АВТОЗВУКЕ</p>
+    <h1>Твой звук. Твой бюджет.</h1>
+    <p class="lead">
+        Выбери задачу — мы покажем подготовленные комплекты.
+        <br>
+        Цена складывается из текущей стоимости компонентов.
+    </p>
+    <form method="get" class="filters">
+        <label>
+            Бюджет до, ₽
+            <input type="number" name="budget" min="0" value="{{ request.GET.budget }}" placeholder="Например, 30000">
+        </label>
+        <label>
+            Задача
+            <select name="purpose">
+                <option value="">Все задачи</option>
+                {% for key,label in purposes %}
+                    <option value="{{ key }}" {% if request.GET.purpose == key %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <button>Подобрать</button>
+        <a href="{% url 'bundles' %}">Сбросить</a>
+    </form>
+    <div class="bundle-grid">
+        {% for bundle in bundles %}
+            <article class="bundle-card"{% if pages_demo %}
+                data-purpose="{{ bundle.purpose }}" data-price="{{ bundle.total|stringformat:'f' }}"{% endif %}>
+                <span class="eyebrow">{{ bundle.get_purpose_display }}</span>
+                <h2>{{ bundle.name }}</h2>
+                <p>{{ bundle.description }}</p>
+                <ul>
+                    {% for item in bundle.items.all %}
+                        <li><a href="{% url 'product' item.product.slug %}">{{ item.product.name }}</a> × {{ item.quantity }}</li>
+                    {% endfor %}
+                </ul>
+                <div class="price-row">
+                    <strong>{{ bundle.total|floatformat:0 }} ₽</strong>
+                    {% if not pages_demo %}
+                        <form method="post" action="{% url 'bundle_add' bundle.pk %}">
+                            {% csrf_token %}
+                            <button {% if not bundle.available %}disabled{% endif %}>
+                                {% if bundle.available %}
+                                    В корзину
+                                {% else %}
+                                    Нет в наличии
+                                {% endif %}
+                            </button>
+                        </form>
+                    {% endif %}
+                </div>
+            </article>
+        {% empty %}
+            <div class="empty">Подходящих комплектов нет. Попробуйте увеличить бюджет.</div>
+        {% endfor %}
+    </div>
+{% endblock %}

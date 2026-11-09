@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+    <a href="{% url 'orders' %}">← Мои заказы</a>
+    <h1>Заказ №{{ order.pk }}</h1>
+    <span class="pill">{{ order.get_status_display }}</span>
+    <p>{{ order.created_at|date:'d.m.Y H:i' }} · {{ order.get_delivery_display }} · Оплата при получении</p>
+    <p>{{ order.full_name }} · {{ order.phone }}</p>
+    {% if order.address %}
+        <p>{{ order.address }}</p>
+    {% endif %}
+    {% for item in order.items.all %}
+        <div class="order-row">
+            <strong>{{ item.name }}</strong>
+            <span>{{ item.quantity }} × {{ item.price|floatformat:0 }} ₽</span>
+            <b>{{ item.subtotal|floatformat:0 }} ₽</b>
+        </div>
+    {% endfor %}
+    <p class="big-price">Итого: {{ order.total|floatformat:0 }} ₽</p>
+    {% if order.comment %}
+        <p>Комментарий: {{ order.comment }}</p>
+    {% endif %}
+{% endblock %}

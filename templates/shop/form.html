@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+    <section class="form-panel">
+        <p class="eyebrow">АВТОРИТМ / ЛИЧНЫЙ КАБИНЕТ</p>
+        <h1>{{ title }}</h1>
+        {% if checkout %}
+            <p>Товары: <strong>{{ total|floatformat:0 }} ₽</strong> · Оплата при получении.</p>
+            <p class="muted">Учебная доставка — бесплатно. Самовывоз из демонстрационного пункта магазина.</p>
+        {% endif %}
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            {% if next %}
+                <input type="hidden" name="next" value="{{ next }}">
+            {% endif %}
+            <button>
+                {% if checkout %}
+                    Подтвердить заказ
+                {% else %}
+                    Продолжить
+                {% endif %}
+            </button>
+        </form>
+        {% if request.resolver_match.url_name == 'login' %}
+            <p>Ещё нет аккаунта? <a href="{% url 'signup' %}">Зарегистрироваться</a></p>
+        {% endif %}
+    </section>
+{% endblock %}

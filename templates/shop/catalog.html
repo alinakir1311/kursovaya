@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block title %}Каталог — АвтоРитм{% endblock %}
+{% block content %}
+    <p class="eyebrow">ОБОРУДОВАНИЕ ДЛЯ ТВОЕЙ СИСТЕМЫ</p>
+    <h1>Каталог автозвука</h1>
+    <form class="filters" method="get">
+        <label>
+            Поиск
+            <input name="q" value="{{ request.GET.q }}" placeholder="Название или бренд">
+        </label>
+        <label>
+            Категория
+            <select name="category">
+                <option value="">Все категории</option>
+                {% for c in categories %}
+                    <option value="{{ c.slug }}" {% if request.GET.category == c.slug %}selected{% endif %}>{{ c.name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label>
+            Бренд
+            <select name="brand">
+                <option value="">Все бренды</option>
+                {% for b in brands %}
+                    <option {% if request.GET.brand == b.name %}selected{% endif %}>{{ b.name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label>
+            Цена от
+            <input type="number" min="0" name="min" value="{{ request.GET.min }}" placeholder="0 ₽">
+        </label>
+        <label>
+            Цена до
+            <input type="number" min="0" name="max" value="{{ request.GET.max }}" placeholder="Любая">
+        </label>
+        <label>
+            Порядок
+            <select name="sort">
+                <option value="">По умолчанию</option>
+                <option value="price" {% if request.GET.sort == 'price' %}selected{% endif %}>Сначала дешевле</option>
+                <option value="-price" {% if request.GET.sort == '-price' %}selected{% endif %}>Сначала дороже</option>
+                <option value="name" {% if request.GET.sort == 'name' %}selected{% endif %}>По названию</option>
+            </select>
+        </label>
+        <div class="catalog-filter-actions">
+            <label class="check">
+                <input type="checkbox" name="available" value="1" {% if request.GET.available %}checked{% endif %}>
+                В наличии
+            </label>
+            <button>Найти</button>
+            <a href="{% url 'catalog' %}">Сбросить</a>
+        </div>
+    </form>
+    <p class="muted">Найдено товаров: {{ page.paginator.count }}</p>
+    <div class="product-grid">
+        {% for product in page %}
+            {% include 'shop/card.html' %}
+        {% empty %}
+            <div class="empty">Ничего не найдено. Попробуйте изменить фильтры.</div>
+        {% endfor %}
+    </div>
+    {% if not pages_demo %}
+        <div class="pagination">
+            {% if page.has_previous %}
+                <a href="?{{ params }}&page={{ page.previous_page_number }}">← Назад</a>
+            {% endif %}
+            <span>{{ page.number }} / {{ page.paginator.num_pages }}</span>
+            {% if page.has_next %}
+                <a href="?{{ params }}&page={{ page.next_page_number }}">Далее →</a>
+            {% endif %}
+        </div>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ product.name }} — АвтоРитм{% endblock %}
+{% block content %}
+    <a href="{% url 'catalog' %}?category={{ product.category.slug }}">← {{ product.category }}</a>
+    <section class="detail">
+        <div class="product-art large">
+            {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}">
+            {% else %}
+                {% with art="shop/products/"|add:product.category.slug|add:".svg" %}
+                    <img src="{% static art %}" alt="Иллюстрация категории {{ product.category }}">
+                {% endwith %}
+            {% endif %}
+        </div>
+        <div>
+            <p class="eyebrow">{{ product.brand }}</p>
+            <h1>{{ product.name }}</h1>
+            <p>{{ product.description }}</p>
+            <p class="availability">В наличии {{ product.stock }} шт</p>
+            <p class="big-price">{{ product.price|floatformat:0 }} ₽</p>
+            {% if not pages_demo %}
+                <form method="post" action="{% url 'cart_change' product.pk %}" class="actions">
+                    {% csrf_token %}
+                    <label>
+                        Количество
+                        <input class="quantity" type="number" name="quantity" value="1" min="1" max="{{ product.stock }}">
+                    </label>
+                    <button {% if not product.stock %}disabled{% endif %}>Добавить в корзину</button>
+                </form>
+                <p class="muted">Оплата при получении<br>Самовывоз или доставка</p>
+            {% endif %}
+        </div>
+    </section>
+    <h2>Характеристики</h2>
+    <dl class="specs">
+        {% for key,value in product.specifications.items %}
+            <div>
+                <dt>{{ key }}</dt>
+                <dd>{{ value }}</dd>
+            </div>
+        {% empty %}
+            <p>Характеристики уточняются.</p>
+        {% endfor %}
+    </dl>
+{% endblock %}

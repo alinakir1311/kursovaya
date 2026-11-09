@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block content %}
+    <p class="eyebrow">ЛИЧНЫЙ КАБИНЕТ / {{ user.username }}</p>
+    <h1>Мои заказы</h1>
+    {% for order in orders %}
+        <a class="order-row" href="{% url 'order' order.pk %}">
+            <b>Заказ №{{ order.pk }}</b>
+            <span>{{ order.created_at|date:'d.m.Y H:i' }}</span>
+            <span class="pill">{{ order.get_status_display }}</span>
+            <strong>{{ order.total|floatformat:0 }} ₽ →</strong>
+        </a>
+    {% empty %}
+        <div class="empty">
+            <h2>Первый заказ впереди</h2>
+            <a class="button" href="{% url 'catalog' %}">Выбрать оборудование</a>
+        </div>
+    {% endfor %}
+{% endblock %}

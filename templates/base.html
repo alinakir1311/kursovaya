@@ -1,0 +1,49 @@
+{% load static %}
+<!doctype html>
+<html lang="ru">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{% block title %}АвтоРитм — магазин автозвука{% endblock %}</title>
+        <link rel="stylesheet" href="{% static 'shop/style.css' %}?v=3">
+        {% if pages_demo %}
+            <script defer src="{% static 'shop/pages.js' %}"></script>
+        {% endif %}
+    </head>
+    <body>
+        <header>
+            <a class="logo" href="{% url 'home' %}">АВТО<span>РИТМ</span></a>
+            <nav aria-label="Главное меню">
+                <a href="{% url 'catalog' %}">Каталог</a>
+                <a href="{% url 'bundles' %}">Подобрать комплект</a>
+                {% if not pages_demo %}
+                    <a href="{% url 'cart' %}">
+                        Корзина
+                        <b class="badge">{{ cart_count }}</b>
+                    </a>
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'orders' %}">Мои заказы</a>
+                        <form method="post" action="{% url 'logout' %}">
+                            {% csrf_token %}
+                            <button class="text-button">Выйти</button>
+                        </form>
+                    {% else %}
+                        <a href="{% url 'login' %}">Войти</a>
+                    {% endif %}
+                {% endif %}
+            </nav>
+        </header>
+        <main>
+            {% for message in messages %}
+                <div class="notice {{ message.tags }}" role="status">{{ message }}</div>
+            {% endfor %}
+            {% block content %}
+            {% endblock %}
+        </main>
+        <footer>
+            <a class="logo" href="{% url 'home' %}">АВТО<span>РИТМ</span></a>
+            <p>Музыка начинается с правильного выбора.</p>
+            <p><a href="{% url 'guide' %}">Как выбрать и заказать →</a></p>
+        </footer>
+    </body>
+</html>

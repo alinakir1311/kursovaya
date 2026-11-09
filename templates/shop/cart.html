@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h1>Твоя корзина</h1>
+    {% if items %}
+        <div class="cart-layout">
+            <div>
+                {% for row in items %}
+                    <article class="cart-row">
+                        <div>
+                            <h3><a href="{% url 'product' row.product.slug %}">{{ row.product.name }}</a></h3>
+                            <span>{{ row.product.price|floatformat:0 }} ₽ за шт</span>
+                        </div>
+                        <form method="post" action="{% url 'cart_change' row.product.pk %}" class="actions">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="set">
+                            <label>
+                                Количество
+                                <input class="quantity" type="number" name="quantity" min="1" max="99" value="{{ row.quantity }}">
+                            </label>
+                            <button class="secondary">Обновить</button>
+                        </form>
+                        <strong>{{ row.subtotal|floatformat:0 }} ₽</strong>
+                        <form method="post" action="{% url 'cart_change' row.product.pk %}">
+                            {% csrf_token %}
+                            <button class="text-button" name="action" value="remove">Удалить</button>
+                        </form>
+                    </article>
+                {% endfor %}
+            </div>
+            <aside class="summary">
+                <h2>Итого</h2>
+                <p class="big-price">{{ total|floatformat:0 }} ₽</p>
+                <p>Стоимость товаров. Оплата при получении. Учебная доставка — бесплатно.</p>
+                <a class="button" href="{% url 'checkout' %}">Оформить заказ →</a>
+                {% if not user.is_authenticated %}
+                    <p class="muted">Для оформления войдите или создайте аккаунт.</p>
+                {% endif %}
+            </aside>
+        </div>
+    {% else %}
+        <div class="empty">
+            <h2>Пока здесь тихо</h2>
+            <p>Добавьте первый товар или готовый комплект.</p>
+            <a class="button" href="{% url 'catalog' %}">Открыть каталог</a>
+        </div>
+    {% endif %}
+{% endblock %}

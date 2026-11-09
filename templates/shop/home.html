@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block content %}
+    <section class="hero">
+        <div>
+            <p class="eyebrow">АВТОЗВУК С ХАРАКТЕРОМ</p>
+            <h1>Почувствуй<br>каждую <em>ноту.</em></h1>
+            <p>От первого обновления акустики до мощного баса.<br>Собери систему, которая звучит по-твоему.</p>
+            <div class="actions">
+                <a class="button" href="{% url 'catalog' %}">Перейти в каталог ↗</a>
+                <a class="button secondary" href="{% url 'bundles' %}">Выбрать комплект</a>
+            </div>
+        </div>
+        <div class="hero-art" aria-hidden="true">
+            <div class="speaker">
+                <div></div>
+            </div>
+            <span>TURN UP<br>YOUR DRIVE</span>
+        </div>
+    </section>
+    <div class="benefits">
+        <div>
+            <b>01 / Выбирай</b>
+            <span>Каталог с подробными характеристиками</span>
+        </div>
+        <div>
+            <b>02 / Собирай</b>
+            <span>Готовые комплекты под твой бюджет</span>
+        </div>
+        <div>
+            <b>03 / Заказывай</b>
+            <span>Самовывоз или доставка<br>Оплата при получении</span>
+        </div>
+    </div>
+    <section>
+        <div class="section-head">
+            <h2>Найди свой звук</h2>
+            <a href="{% url 'catalog' %}">Весь каталог →</a>
+        </div>
+        <div class="categories">
+            {% for category in categories %}
+                <a href="{% url 'catalog' %}?category={{ category.slug }}">
+                    <span>0{{ forloop.counter }}</span>
+                    {{ category.name }}
+                    ↗
+                </a>
+            {% endfor %}
+        </div>
+    </section>
+    <section>
+        <div class="section-head">
+            <h2>Знакомство с ассортиментом</h2>
+            <span>Начни с главного</span>
+        </div>
+        <div class="product-grid">
+            {% for product in products %}
+                {% include 'shop/card.html' %}
+            {% endfor %}
+        </div>
+    </section>
+    <section class="banner">
+        <div>
+            <p class="eyebrow">ВСЁ УЖЕ СОБРАНО</p>
+            <h2>Хороший звук — в комплекте.</h2>
+            <p>Укажи бюджет и выбери набор для своей задачи.</p>
+        </div>
+        <a class="button" href="{% url 'bundles' %}">Подобрать комплект ↗</a>
+    </section>
+{% endblock %}

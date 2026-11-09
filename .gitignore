@@ -1,0 +1,14 @@
+.venv/
+__pycache__/
+*.pyc
+*.sqlite3
+media/
+staticfiles/
+.env
+.env.*
+*.log
+.idea/
+_site/
+.tools/
+docs/
+[Rr][Ee][Aa][Dd][Mm][Ee]*
